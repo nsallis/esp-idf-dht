@@ -42,7 +42,7 @@ pub fn read(sensor: &mut PinDriver<'_, InputOutput>)
       return Err(format!("It tried to read {tries} times but the reading didn't work"));
     }
   }
-xtensa-esp32s3xtensa-esp32s3}
+}
 
 fn connect(sensor: &mut PinDriver<'_, InputOutput>) {
   //!Send the connect sequence to the sensor
