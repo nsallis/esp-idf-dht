@@ -1,8 +1,3 @@
-pub struct DhtData {
-  pub temperature: f32,
-  pub humidity: f32
-}
-
 pub fn bits_to_bytes(bits: Vec<u8>) -> [u8; 5] {
   //! Converts bits to bytes (MSB)
   let mut bytes = [0u8; 5];
@@ -37,13 +32,12 @@ pub fn checksum(bytes: [u8; 5]) -> Result<(), ()> {
   }
 }
 
-pub fn convert_to_data_struct(bytes: [u8; 5]) -> DhtData{
+pub fn convert_to_decimal(bytes: [u8; 5]) -> [f32; 2]{
   //! convert bytes to float
-
-  DhtData {
-    humidity: bytes[0] as f32 + bytes[1] as f32 / 10.0,
-    temperature: bytes[2] as f32 + bytes[3] as f32 / 10.0
-  }
+  [
+    bytes[0] as f32 + bytes[1] as f32 / 10.0,
+    bytes[2] as f32 + bytes[3] as f32 / 10.0
+  ]
 }
 
 #[cfg(test)]
@@ -69,11 +63,8 @@ mod tests {
   }
 
   #[test]
-  fn test_convert_to_data_struct() {
-    let bytes = [54,0,24,1,79];
-    let data = convert_to_data_struct(bytes);
-
-    assert_eq!(data.humidity, 54.0);
-    assert_eq!(data.temperature, 24.1);
+  fn test_convert_to_decimal() {
+    let bytes = [1,2,3,4,10];
+    assert_eq!(convert_to_decimal(bytes), [1.2, 3.4]);
   }
 }
