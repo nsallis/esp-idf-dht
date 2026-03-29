@@ -1,12 +1,21 @@
 use esp_idf_hal::{gpio::*};
 use std::thread::sleep;
 use std::time::{Duration, Instant};
-use crate::utils::{self, DhtData};
+use crate::utils;
 
 static NUMBER_OF_TRY_BEFORE_ERROR: u8 = 10;
 
-pub fn read<T: Pin> (sensor: &mut PinDriver<'_, T, InputOutput>) 
-    -> Result<DhtData, String>{
+// pub async fn dht() -> Result<[f32; 2], &'static str> {
+//   let peripherals: Peripherals = Peripherals::take().unwrap();
+//   let pins = peripherals.pins;
+//   let mut sensor = PinDriver::input_output_od(pins.gpio21).unwrap();
+//   sleep(Duration::from_secs(1));
+  
+//   read(&mut sensor).await
+// }
+
+pub fn read(sensor: &mut PinDriver<'_, InputOutput>)
+    -> Result<[f32; 2], String>{
   //! Read the value of the sensor
   let mut tries: u8 = 0;
 
@@ -33,29 +42,29 @@ pub fn read<T: Pin> (sensor: &mut PinDriver<'_, T, InputOutput>)
       return Err(format!("It tried to read {tries} times but the reading didn't work"));
     }
   }
-}
+xtensa-esp32s3xtensa-esp32s3}
 
-fn connect<T: Pin> (sensor: &mut PinDriver<'_, T, InputOutput>){
+fn connect(sensor: &mut PinDriver<'_, InputOutput>) {
   //!Send the connect sequence to the sensor
   // log::info!("Starting communication");
   
-  PinDriver::set_high(sensor).unwrap();
+  sensor.set_high().unwrap();
   sleep(Duration::from_millis(100));
   
-  PinDriver::set_low(sensor).unwrap();
+  sensor.set_low().unwrap();
   
   sleep(Duration::from_millis(30));
   
-  PinDriver::set_high(sensor).unwrap();
+  sensor.set_high().unwrap();
 }
 
-fn get_level_until_timeout<T: Pin>(sensor: &mut PinDriver<'_, T, InputOutput>, level_meter: Level, timeout: Duration) 
+fn get_level_until_timeout(sensor: &mut PinDriver<'_, InputOutput>, level_meter: Level, timeout: Duration)
     -> Result<Duration, String>{
   //!Get a level with a timeout, returns the elapsed time
   let start = Instant::now();
   
   loop{
-    if PinDriver::get_level(sensor) == level_meter {
+    if sensor.get_level() == level_meter {
       return Ok(start.elapsed());
     } 
     
@@ -65,8 +74,9 @@ fn get_level_until_timeout<T: Pin>(sensor: &mut PinDriver<'_, T, InputOutput>, l
   }
 }
 
-fn get<T: Pin> (sensor: &mut PinDriver<'_, T, InputOutput>) -> Result<DhtData, String>{
-  //!Return the Data struct of temperature and humidity read by the sensor
+
+fn get(sensor: &mut PinDriver<'_, InputOutput>) -> Result<[f32; 2], String>{
+  //!Return the [Humidity value, Temperature value] read by the sensor
   let mut bits: Vec<u8> = Vec::new();
 
   loop{
@@ -91,7 +101,7 @@ fn get<T: Pin> (sensor: &mut PinDriver<'_, T, InputOutput>) -> Result<DhtData, S
   }
 
   match check(bits){
-    Ok(bytes) => { Ok(utils::convert_to_data_struct(bytes)) }
+    Ok(bytes) => { Ok(utils::convert_to_decimal(bytes)) }
     Err(error) => { return Err(error) }
   }
 }
