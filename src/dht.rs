@@ -5,7 +5,7 @@ use crate::utils::{self, DhtData};
 
 static NUMBER_OF_TRY_BEFORE_ERROR: u8 = 10;
 
-pub fn read<T: Pin> (sensor: &mut PinDriver<'_, T, InputOutput>) 
+pub fn read(sensor: &mut PinDriver<InputOutput>)
     -> Result<DhtData, String>{
   //! Read the value of the sensor
   let mut tries: u8 = 0;
@@ -35,7 +35,7 @@ pub fn read<T: Pin> (sensor: &mut PinDriver<'_, T, InputOutput>)
   }
 }
 
-fn connect<T: Pin> (sensor: &mut PinDriver<'_, T, InputOutput>){
+fn connect(sensor: &mut PinDriver<'_, InputOutput>){
   //!Send the connect sequence to the sensor
   // log::info!("Starting communication");
   
@@ -49,7 +49,7 @@ fn connect<T: Pin> (sensor: &mut PinDriver<'_, T, InputOutput>){
   PinDriver::set_high(sensor).unwrap();
 }
 
-fn get_level_until_timeout<T: Pin>(sensor: &mut PinDriver<'_, T, InputOutput>, level_meter: Level, timeout: Duration) 
+fn get_level_until_timeout(sensor: &mut PinDriver<'_, InputOutput>, level_meter: Level, timeout: Duration)
     -> Result<Duration, String>{
   //!Get a level with a timeout, returns the elapsed time
   let start = Instant::now();
@@ -65,7 +65,7 @@ fn get_level_until_timeout<T: Pin>(sensor: &mut PinDriver<'_, T, InputOutput>, l
   }
 }
 
-fn get<T: Pin> (sensor: &mut PinDriver<'_, T, InputOutput>) -> Result<DhtData, String>{
+fn get(sensor: &mut PinDriver<'_, InputOutput>) -> Result<DhtData, String>{
   //!Return the Data struct of temperature and humidity read by the sensor
   let mut bits: Vec<u8> = Vec::new();
 

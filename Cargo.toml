@@ -8,7 +8,7 @@ homepage = "https://github.com/ClemPera/esp-idf-dht"
 documentation = "https://docs.rs/esp-idf-dht/latest/esp-idf-dht"
 description = "Read values from DHT11/DHT22 temperature and humidity sensors using esp-idf"
 resolver = "2"
-rust-version = "1.77"
+rust-version = "1.82"
 categories = ["embedded"]
 keywords = ["esp", "esp32", "dht", "dht11", "dht22"]
 license = "AGPL-3.0"
@@ -31,7 +31,7 @@ opt-level = "z"
 # [target.'cfg(target_arch = "xtensa")'.dependencies]
 # log = "0.4"
 # esp-idf-svc = "0.51"
-esp-idf-hal = "^0.45"
+esp-idf-hal = "0.46.1"
 anyhow = "^1.0.98"
 
 # --- Optional Embassy Integration ---
